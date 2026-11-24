@@ -1,0 +1,17 @@
+{
+  "name": "jolly-kringle",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A nautical Secret Santa for three couples, hosted on Netlify.",
+  "type": "module",
+  "scripts": {
+    "dev": "node dev/server.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@netlify/blobs": "11.1.11"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

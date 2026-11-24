@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="theme-color" content="#0c1f33" />
+    <meta name="description" content="Secret Santa on the high seas." />
+    <title>The Jolly Kringle</title>
+    <link rel="icon" href="art/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="art/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&family=IM+Fell+English:ital@0;1&family=Pirata+One&display=swap"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="snow" aria-hidden="true"></div>
+
+    <header class="hero">
+      <img
+        class="hero-art"
+        src="art/hero.svg"
+        width="1200"
+        height="460"
+        alt="Santa at the helm of a red-sailed ship, pulled across a moonlit sea by a whale, two walruses in Santa hats and two seals in scarves"
+      />
+      <div class="masthead">
+        <p class="kicker">Secret Santa on the high seas</p>
+        <h1>The Jolly Kringle</h1>
+        <p class="voyage" id="voyage">Christmas voyage</p>
+      </div>
+    </header>
+
+    <main id="app">
+      <p class="loading">Hoisting the sails…</p>
+    </main>
+
+    <footer>
+      <p>Fair winds and following seas.</p>
+      <p>Lost your link? Ask the organizer to send it again.</p>
+    </footer>
+
+    <noscript><p class="loading">This ship needs JavaScript to sail.</p></noscript>
+    <script type="module" src="crew.js"></script>
+  </body>
+</html>
