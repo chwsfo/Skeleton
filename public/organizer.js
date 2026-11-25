@@ -1,4 +1,4 @@
-import { api, el, letItSnow, storage, toast } from "./common.js";
+import { api, el, letItSnow, sleepsUntil, storage, toast } from "./common.js";
 
 const keyStore = storage("jolly-kringle:organizer");
 const app = document.getElementById("app");
@@ -99,7 +99,14 @@ function render() {
       ),
       0,
     ),
-    el("div", { class: "org-grid" }, rise(drawCard(), 1), rise(linksCard(), 2), rise(eventCard(), 3)),
+    el(
+      "div",
+      { class: "org-grid" },
+      rise(drawCard(), 1),
+      rise(linksCard(), 2),
+      rise(eventCard(), 3),
+      rise(revealCard(), 4),
+    ),
   );
   footer.replaceChildren(
     el("p", {}, "Done for now? "),
@@ -260,6 +267,88 @@ function eventCard() {
   });
 
   return card("Ship's log", "Date, place and budget", form);
+}
+
+function revealCard() {
+  const { done, revealed, revealedAt } = state.draw;
+  const setReveal = async (on, button) => {
+    button.disabled = true;
+    try {
+      state = await call({ op: "reveal", on });
+      render();
+      toast(on ? "The reveal party is on! Everyone's page links to it." : "Hidden again.");
+    } catch (err) {
+      button.disabled = false;
+      toast(err.message, { error: true });
+    }
+  };
+
+  let status;
+  let actions;
+  if (!done) {
+    status = el("div", { class: "status-line" }, el("span", { class: "dot" }), el("p", { text: "Draw the lots first." }));
+  } else if (!revealed) {
+    status = el(
+      "div",
+      { class: "status-line" },
+      el("span", { class: "dot" }),
+      el("p", { text: "Hidden. Nobody can see who had whom, not even you." }),
+    );
+    actions = el(
+      "div",
+      { class: "form-actions" },
+      el("button", {
+        class: "btn",
+        type: "button",
+        text: "Start the reveal party",
+        onclick: (e) => {
+          const days = sleepsUntil(state.event);
+          const question =
+            days > 0
+              ? `The exchange isn't for ${days} ${days === 1 ? "day" : "days"}. Reveal who had whom to everyone now anyway?`
+              : "Reveal who had whom to everyone now?";
+          if (confirm(question)) setReveal(true, e.currentTarget);
+        },
+      }),
+    );
+  } else {
+    const when = new Date(revealedAt).toLocaleString(undefined, {
+      day: "numeric",
+      month: "long",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+    status = el(
+      "div",
+      { class: "status-line" },
+      el("span", { class: "dot ok" }),
+      el("p", { text: `Live since ${when}. Everyone's page links to it.` }),
+    );
+    actions = el(
+      "div",
+      { class: "form-actions" },
+      el("a", { class: "btn brass", href: "/reveal", text: "Open the reveal page" }),
+      el("button", {
+        class: "link-btn",
+        type: "button",
+        text: "Hide it again",
+        onclick: (e) => {
+          if (confirm("Hide the reveal page again?")) setReveal(false, e.currentTarget);
+        },
+      }),
+    );
+  }
+
+  return card(
+    "Reveal party",
+    "Unmask the Santas",
+    status,
+    actions,
+    el("p", {
+      class: "fine",
+      text: "When everyone's together, start the reveal and put the reveal page on a big screen. Take turns guessing each Santa before you uncork their bottle.",
+    }),
+  );
 }
 
 // ---------- Handing out links ----------

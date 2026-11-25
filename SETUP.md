@@ -27,6 +27,7 @@ Storage uses Netlify Blobs, which is built in. There's nothing to set up.
 2. Copy each person's link and text it to them. People can add wishes straight away, even before the draw.
 3. Press **Draw the lots**. You can redraw as many times as you like until someone opens their page. The first time anyone sees their person, the draw locks for good.
 4. The organizer page shows who has opened their orders, so you know whom to nudge.
+5. **At the party**, press **Start the reveal party** on the organizer page. Everyone's page gets a banner linking to the reveal page (`/reveal`), and anyone already waiting on it sees it open by itself. Put it on a big screen and take turns: each bottle asks "Who was X's Secret Santa?", everyone guesses, then someone taps to uncork it. The finale is a ship's-wheel chart of who had whom. Until you start it, nobody can see the reveal, you included, and once it's started the draw can't be redone. **Hide it again** puts the bottles back.
 
 **Honor system:** the organizer page lists all six links. Opening someone else's link shows their person, and doing it after the draw also locks the draw. So only open your own.
 
