@@ -34,7 +34,7 @@ const TYPES = {
   ".svg": "image/svg+xml",
   ".txt": "text/plain; charset=utf-8",
 };
-const ROUTES = { "/": "index.html", "/organizer": "organizer.html" };
+const ROUTES = { "/": "index.html", "/organizer": "organizer.html", "/reveal": "reveal.html" };
 
 // Send the same headers Netlify will, read from netlify.toml.
 const toml = await readFile(fileURLToPath(new URL("../netlify.toml", import.meta.url)), "utf8");

@@ -10,6 +10,11 @@
   to = "/organizer.html"
   status = 200
 
+[[redirects]]
+  from = "/reveal"
+  to = "/reveal.html"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]

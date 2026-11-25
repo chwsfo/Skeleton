@@ -1,4 +1,5 @@
 import {
+  BOTTLE,
   api,
   el,
   formatEventDate,
@@ -10,24 +11,6 @@ import {
   svg,
   toast,
 } from "./common.js";
-
-const BOTTLE = `
-<svg viewBox="0 0 120 200" aria-hidden="true">
-  <rect x="46" y="6" width="28" height="24" rx="5" fill="#a87a4a"/>
-  <path d="M50 13 h20 M50 20 h20" stroke="#7f5530" stroke-width="1.6"/>
-  <path d="M48 28 h24 v24 q0 10 14 20 q16 11 16 33 v68 q0 17 -17 17 h-50 q-17 0 -17 -17 v-68 q0 -22 16 -33 q14 -10 14 -20 z"
-        fill="#a6d6ca" fill-opacity="0.38" stroke="#4f8579" stroke-width="3"/>
-  <path d="M21 150 q39 -12 78 0 v18 q0 15 -15 15 h-48 q-15 0 -15 -15 z" fill="#7fb8ad" fill-opacity="0.35"/>
-  <g transform="rotate(-9 60 132)">
-    <rect x="38" y="90" width="44" height="82" rx="9" fill="#f4e8cc" stroke="#c9ad7a" stroke-width="1.5"/>
-    <path d="M38 101 q22 6 44 0 M38 161 q22 6 44 0" stroke="#c9ad7a" stroke-width="1.5" fill="none"/>
-    <path d="M37 124 h46" stroke="#b3261e" stroke-width="6"/>
-    <circle cx="60" cy="124" r="7.5" fill="#8f1e17"/>
-    <path d="M57 121 l6 6 M63 121 l-6 6" stroke="#e2b44f" stroke-width="1.6"/>
-  </g>
-  <path d="M31 104 q-3 32 0 62" stroke="#fff" stroke-opacity="0.75" stroke-width="5" stroke-linecap="round" fill="none"/>
-  <path d="M57 36 v14" stroke="#fff" stroke-opacity="0.6" stroke-width="3" stroke-linecap="round"/>
-</svg>`;
 
 const ANCHOR = `
 <svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="#2d5b47" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
@@ -139,6 +122,17 @@ function render() {
 
   const ordered = [...lists].sort((a, b) => ROLE_ORDER[a.role] - ROLE_ORDER[b.role]);
   app.replaceChildren(
+    view.revealed
+      ? rise(
+          el(
+            "a",
+            { class: "reveal-banner", href: `/reveal#${token}` },
+            el("span", { class: "reveal-banner-title", text: "The reveal party is on!" }),
+            el("span", { class: "reveal-banner-sub", text: "Uncork the bottles and see who had whom →" }),
+          ),
+          0,
+        )
+      : null,
     rise(
       el(
         "section",

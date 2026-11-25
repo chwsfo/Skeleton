@@ -237,3 +237,57 @@ test("event details are validated", async () => {
   const res = await call("POST", "/api/organizer", { organizer: true, body: { op: "event", event: { date: "next tuesday" } } });
   assert.equal(res.status, 400);
 });
+
+test("the reveal party: hidden until the organizer starts it, then open to everyone aboard", async () => {
+  const { call } = setup();
+
+  // Can't reveal before the draw.
+  let res = await call("POST", "/api/organizer", { organizer: true, body: { op: "reveal", on: true } });
+  assert.equal(res.status, 400);
+
+  await call("POST", "/api/organizer", { organizer: true, body: { op: "draw" } });
+
+  // Before the reveal, nobody can see it: not crew, not the organizer.
+  res = await call("GET", "/api/reveal", { as: "bea" });
+  assert.equal(res.status, 403);
+  res = await call("GET", "/api/reveal", { organizer: true });
+  assert.equal(res.status, 403);
+  assert.equal((await call("GET", "/api/me", { as: "bea" })).body.revealed, false);
+
+  // Strangers can't see it even after.
+  res = await call("POST", "/api/organizer", { organizer: true, body: { op: "reveal", on: true } });
+  assert.equal(res.status, 200);
+  assert.equal(res.body.draw.revealed, true);
+  assert.equal(res.body.draw.locked, true);
+  res = await call("GET", "/api/reveal");
+  assert.equal(res.status, 401);
+
+  // Everyone aboard sees the same, complete chart.
+  const views = await Promise.all(CREW.map((p) => call("GET", "/api/reveal", { as: p.id })));
+  for (const v of views) assert.equal(v.status, 200);
+  const chart = views[0].body;
+  assert.equal(chart.gifts.length, 6);
+  const assignments = Object.fromEntries(chart.gifts.map((g) => [g.from, g.to]));
+  assert.ok(isValidDraw(assignments));
+  for (const p of CREW) {
+    const me = (await call("GET", "/api/me", { as: p.id })).body;
+    assert.equal(me.revealed, true);
+    assert.equal(me.recipient.id, assignments[p.id]);
+  }
+
+  // The loops cover everyone once, and each person gives to the next in their loop.
+  const loops = chart.loops;
+  assert.deepEqual(loops.flat().sort(), CREW.map((p) => p.id).sort());
+  assert.ok(loops.every((l) => l.length === 6 || l.length === 3));
+  for (const loop of loops) loop.forEach((id, i) => assert.equal(assignments[id], loop[(i + 1) % loop.length]));
+
+  // The organizer page reveals now too, and the draw can't be redone.
+  assert.equal((await call("GET", "/api/reveal", { organizer: true })).status, 200);
+  res = await call("POST", "/api/organizer", { organizer: true, body: { op: "draw" } });
+  assert.equal(res.status, 409);
+
+  // Hiding it again works.
+  await call("POST", "/api/organizer", { organizer: true, body: { op: "reveal", on: false } });
+  assert.equal((await call("GET", "/api/reveal", { as: "bea" })).status, 403);
+  assert.equal((await call("GET", "/api/me", { as: "bea" })).body.revealed, false);
+});
