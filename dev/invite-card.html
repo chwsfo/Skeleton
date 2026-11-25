@@ -13,7 +13,8 @@
   html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #0c1f33; }
   svg { display: block; }
   .title { font-family: "Pirata One"; font-size: 92px; fill: #f4e8cc; }
-  .tag { font-family: "IM Fell English"; font-style: italic; font-size: 36px; fill: #ecca7c; }
+  .tag { font-family: "IM Fell English"; font-style: italic; font-size: 38px; }
+  .tag.sand { fill: #4a3520; }
 </style>
 </head>
 <body>
@@ -51,6 +52,20 @@
       <stop offset="0" stop-color="#efe8d8"/>
       <stop offset="1" stop-color="#a99f8b"/>
     </linearGradient>
+    <linearGradient id="sand" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6f6150"/>
+      <stop offset="0.22" stop-color="#9c8767"/>
+      <stop offset="0.6" stop-color="#bba37c"/>
+      <stop offset="1" stop-color="#a48d69"/>
+    </linearGradient>
+    <linearGradient id="farSea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#173c5e"/>
+      <stop offset="1" stop-color="#215a7e"/>
+    </linearGradient>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="1" seed="3" result="n"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.25  0 0 0 0 0.2  0 0 0 0 0.12  0 0 0 0.9 -0.35" in="n"/>
+    </filter>
     <!-- sea-worn frosting on the glass -->
     <filter id="frost" x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
@@ -86,30 +101,68 @@
     <circle cx="1040" cy="140" r="1.4"/><circle cx="1150" cy="50" r="1.8"/><circle cx="1120" cy="260" r="1.3"/>
     <circle cx="40" cy="330" r="1.3"/><circle cx="420" cy="30" r="1.2"/><circle cx="1180" cy="340" r="1.2"/>
   </g>
-  <path d="M1060 210 l5 -15 l5 15 l15 5 l-15 5 l-5 15 l-5 -15 l-15 -5 z" fill="#fbf4dd"/>
+  <path d="M960 120 l5 -15 l5 15 l15 5 l-15 5 l-5 15 l-5 -15 l-15 -5 z" fill="#fbf4dd"/>
 
-  <!-- far sea and a distant Jolly Kringle on the horizon -->
-  <rect y="420" width="1200" height="210" fill="url(#sea)"/>
-  <g transform="translate(1010 392) scale(0.55)">
+  <!-- the sea out to the horizon, with the Jolly Kringle sailing off -->
+  <rect y="300" width="1200" height="160" fill="url(#farSea)"/>
+  <g transform="translate(1010 262) scale(0.55)">
     <path d="M0 40 L170 40 Q160 62 140 66 L28 66 Q10 60 0 40 Z" fill="#0b1a2b"/>
     <path d="M60 40 V-40 M110 40 V-60" stroke="#0b1a2b" stroke-width="4"/>
     <path d="M40 -30 L84 -30 Q78 0 88 30 L36 30 Q28 0 40 -30 Z" fill="#a8322a"/>
     <path d="M88 -50 L136 -50 Q128 -10 140 30 L84 30 Q76 -10 88 -50 Z" fill="#b83a2e"/>
     <circle cx="170" cy="36" r="10" fill="#ffd27a" opacity="0.8"/>
   </g>
-  <g stroke="#f6e7b8" stroke-linecap="round" opacity="0.4">
-    <path d="M120 440 H200 M135 458 H185 M110 476 H160 M170 476 H210"/>
+  <g stroke="#f6e7b8" stroke-linecap="round" opacity="0.45">
+    <path d="M130 312 H200 M140 328 H190 M120 346 H170 M178 346 H214 M142 366 H196 M130 388 H160"/>
+  </g>
+  <!-- rows of breakers rolling in -->
+  <g fill="none" stroke="#dcecef" stroke-linecap="round">
+    <path d="M0 336 q60 -6 120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0" stroke-width="2" stroke-dasharray="30 26 8 30" opacity="0.45"/>
+    <path d="M0 370 q60 -8 120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0" stroke-width="2.6" stroke-dasharray="44 20 12 26" opacity="0.6"/>
+  </g>
+  <path d="M0 412 q50 -16 100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 V470 H0 Z" fill="#2a6a8c"/>
+  <path d="M0 412 q50 -16 100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0" stroke="#f2f8f8" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="70 14 22 10" opacity="0.85"/>
+
+  <!-- the beach: wet sand at the waterline, drying toward us -->
+  <path d="M0 440 C200 432 400 446 600 438 C800 430 1000 444 1200 436 V630 H0 Z" fill="url(#sand)"/>
+  <path d="M0 440 C200 432 400 446 600 438 C800 430 1000 444 1200 436 V630 H0 Z" filter="url(#grain)" opacity="0.55"/>
+  <!-- moonlight glinting on the wet sand -->
+  <g stroke="#f6e7b8" stroke-linecap="round" opacity="0.35">
+    <path d="M140 512 H190 M150 528 H182 M136 544 H170"/>
+  </g>
+
+  <!-- a thin sheet of surf running up the sand, with a lacy foam edge -->
+  <path d="M0 432 H1200 V490 C1140 500 1090 482 1030 494 C960 508 900 486 830 500 C760 512 700 496 640 506 C560 516 500 498 430 508 C350 520 290 494 220 506 C150 518 80 496 0 506 Z" fill="#a9dbe3" fill-opacity="0.32"/>
+  <g fill="none" stroke="#f7fbfb" stroke-linecap="round">
+    <path d="M0 506 C80 496 150 518 220 506 C290 494 350 520 430 508 C500 498 560 516 640 506 C700 496 760 512 830 500 C900 486 960 508 1030 494 C1090 482 1140 500 1200 490" stroke-width="5" stroke-dasharray="26 8 6 10 40 6" opacity="0.9"/>
+    <path d="M0 498 C90 488 160 508 230 497 C300 486 360 510 440 499 C520 489 570 506 650 497 C720 488 770 503 840 492 C910 480 970 499 1040 486 C1100 476 1150 490 1200 482" stroke-width="2" stroke-dasharray="10 12 4 16" opacity="0.6"/>
+  </g>
+  <g fill="#f7fbfb" opacity="0.75">
+    <circle cx="60" cy="510" r="2.4"/><circle cx="118" cy="512" r="1.6"/><circle cx="182" cy="515" r="2"/><circle cx="270" cy="505" r="1.8"/>
+    <circle cx="760" cy="513" r="2.2"/><circle cx="880" cy="504" r="1.6"/><circle cx="990" cy="508" r="2.2"/><circle cx="1110" cy="496" r="1.8"/>
   </g>
 
   <!-- title, kept narrow enough for a square crop -->
   <text class="title" x="600" y="118" text-anchor="middle" style="paint-order: stroke" stroke="#761510" stroke-width="10" stroke-linejoin="round">The Jolly Kringle</text>
 
-  <!-- trailing kelp behind the bottle -->
-  <path d="M760 300 C800 360 760 410 820 450 C860 476 840 520 880 560" stroke="#4d5f26" stroke-width="16" fill="none" stroke-linecap="round" opacity="0.9"/>
-  <g fill="#6f7f33"><ellipse cx="790" cy="370" rx="9" ry="7"/><ellipse cx="826" cy="452" rx="8" ry="6"/><ellipse cx="862" cy="520" rx="7" ry="5"/></g>
+  <!-- soft shadow where the bottle rests in the sand -->
+  <ellipse cx="530" cy="508" rx="250" ry="18" transform="rotate(-7 530 508)" fill="#2c2418" opacity="0.45" filter="url(#soft)"/>
+  <!-- kelp washed up beside the bottle -->
+  <path d="M790 420 C840 470 880 500 940 512 C990 522 1030 508 1080 520" stroke="#3f5220" stroke-width="14" fill="none" stroke-linecap="round"/>
+  <path d="M900 506 C930 470 960 466 990 470" stroke="#4d6327" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <g fill="#6f7f33"><ellipse cx="868" cy="490" rx="8" ry="6"/><ellipse cx="1000" cy="516" rx="8" ry="6"/><ellipse cx="988" cy="470" rx="6" ry="5"/></g>
+  <!-- a couple of shells -->
+  <g transform="translate(250 560) rotate(-12)">
+    <path d="M-16 6 Q0 -22 16 6 Z" fill="#f0c4b0" stroke="#b9826c" stroke-width="1.5"/>
+    <path d="M-10 5 L-4 -10 M0 5 V-13 M10 5 L4 -10" stroke="#c9917a" stroke-width="1.3"/>
+  </g>
+  <g transform="translate(1000 575) rotate(18)">
+    <path d="M0 -10 C10 -10 12 6 0 10 C-12 6 -10 -10 0 -10 Z" fill="#efe2cc" stroke="#a99677" stroke-width="1.4"/>
+    <path d="M0 -8 V8 M-5 -4 Q0 0 5 -4" stroke="#b9a684" stroke-width="1.1" fill="none"/>
+  </g>
 
-  <!-- the bottle, tipped up toward the neck -->
-  <g transform="translate(590 330) rotate(-11)">
+  <!-- the bottle, washed up and resting in the sand -->
+  <g transform="translate(600 405) rotate(-7) scale(0.9)">
     <!-- shadowed glass body -->
     <path d="M-240 -95 H110 C150 -95 170 -36 192 -34 H262 V34 H192 C170 36 150 95 110 95 H-240 C-290 95 -305 60 -305 0 C-305 -60 -290 -95 -240 -95 Z" fill="url(#glass)"/>
 
@@ -198,16 +251,21 @@
     <use href="#star" transform="translate(-140 -86) rotate(14) scale(1.05)"/>
   </g>
 
-  <!-- near water lapping over the bottom of the bottle -->
-  <path d="M0 468 q50 -12 100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 V630 H0 Z" fill="#123553" fill-opacity="0.82"/>
-  <path d="M0 468 q50 -12 100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0" stroke="#dcecef" stroke-width="3" fill="none" stroke-dasharray="40 16 10 22" opacity="0.7" stroke-linecap="round"/>
-  <g stroke="#e6f2f3" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.8">
-    <path d="M250 488 q16 -10 32 0 M300 496 q20 -8 40 2 M860 478 q18 -10 36 0 M900 490 q14 -8 28 0"/>
+  <!-- sea foam lapping round the bottle's base -->
+  <path d="M206 526 C250 500 300 500 340 510 C380 520 420 508 466 514 C510 520 548 530 584 528 C548 544 488 548 430 542 C370 550 290 552 206 526 Z" fill="#eef7f7" fill-opacity="0.55"/>
+  <path d="M206 526 C250 500 300 500 340 510 C380 520 420 508 466 514 C510 520 548 530 584 528" stroke="#ffffff" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="22 6 8 8 30 5"/>
+  <path d="M236 516 C280 498 312 502 350 504" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="6 6" opacity="0.8"/>
+  <path d="M480 520 C540 508 610 496 690 486 C712 484 720 492 700 498 C630 508 560 518 500 526 Z" fill="#eef7f7" fill-opacity="0.4"/>
+  <path d="M488 518 C548 506 620 494 700 486" stroke="#ffffff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-dasharray="14 6 4 8" opacity="0.85"/>
+  <g fill="#ffffff" opacity="0.85">
+    <circle cx="262" cy="530" r="3"/><circle cx="300" cy="536" r="2.2"/><circle cx="348" cy="530" r="2.6"/><circle cx="392" cy="536" r="1.8"/>
+    <circle cx="436" cy="530" r="2.4"/><circle cx="486" cy="536" r="1.8"/><circle cx="530" cy="534" r="2.2"/><circle cx="320" cy="520" r="1.6"/>
+    <circle cx="410" cy="522" r="1.4"/><circle cx="560" cy="530" r="1.5"/>
   </g>
-  <path d="M0 520 q50 -14 100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 V630 H0 Z" fill="#0c2239"/>
 
-  <!-- tagline -->
-  <text class="tag" x="600" y="590" text-anchor="middle">Your sealed orders have washed ashore</text>
+  <!-- tagline, written in the sand -->
+  <text class="tag" x="600" y="598" text-anchor="middle" fill="#e6d6b2" transform="translate(0 1.6)">Your sealed orders have washed ashore</text>
+  <text class="tag sand" x="600" y="598" text-anchor="middle">Your sealed orders have washed ashore</text>
 </svg>
 </body>
 </html>
