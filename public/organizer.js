@@ -348,6 +348,13 @@ function revealCard() {
       class: "fine",
       text: "When everyone's together, start the reveal and put the reveal page on a big screen. Take turns guessing each Santa before you uncork their bottle.",
     }),
+    el(
+      "p",
+      { class: "fine" },
+      "Want to see it first? ",
+      el("a", { class: "link-btn inline", href: "/reveal?practice", text: "Try a practice run" }),
+      " with a made-up crew. It never shows the real draw.",
+    ),
   );
 }
 
