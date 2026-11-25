@@ -57,6 +57,7 @@ let revealed = revealStore.get();
 let editing = null; // id of the wish being edited
 let draft = emptyDraft();
 let editDraft = null;
+let listOpen = null; // whether "Your wish list" is expanded; decided on first load
 
 function readToken() {
   const fromHash = decodeURIComponent(location.hash.replace(/^#/, "")).trim();
@@ -121,7 +122,11 @@ function render() {
   document.getElementById("voyage").textContent = `Christmas voyage of ${year}`;
 
   const ordered = [...lists].sort((a, b) => ROLE_ORDER[a.role] - ROLE_ORDER[b.role]);
-  app.replaceChildren(
+  const mine = lists.find((l) => l.role === "me");
+  // Start folded once there's at least one wish; open if the list is empty.
+  if (listOpen === null) listOpen = mine.items.length === 0;
+
+  const sections = [
     view.revealed
       ? rise(
           el(
@@ -162,8 +167,18 @@ function render() {
       { class: "lists" },
       ordered.map((list, i) => rise(listCard(list), 4 + i)),
     ),
-  );
+    rise(myListEditor(mine), 10),
+  ];
+  app.replaceChildren(...sections.filter(Boolean));
   firstRender = false;
+}
+
+function openMyList() {
+  listOpen = true;
+  render();
+  const editor = document.getElementById("my-list");
+  editor?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+  editor?.querySelector(".wish-form:not(.editing-form) input[name=title]")?.focus({ preventScroll: true });
 }
 
 function ordersCard(recipient, partner, drawn) {
@@ -296,20 +311,14 @@ function listCard(list) {
   const mine = role === "me";
   return el(
     "article",
-    { class: `card${mine ? " mine" : ""}` },
+    { class: "card" },
     el(
       "div",
       { class: "list-head" },
-      el("h3", { text: mine ? "Your wish list" : `${owner.name}'s list` }),
+      el("h3", { text: mine ? "Your list" : `${owner.name}'s list` }),
       tag ? el("span", { class: `tag ${tag[1]}`, text: tag[0] }) : null,
     ),
     el("div", { class: "rope" }),
-    mine
-      ? el("p", {
-          class: "list-help",
-          text: "Add links, sizes and anything else that helps. Your partner and your Santa can mark things they're getting. You'll never see which.",
-        })
-      : null,
     canClaim
       ? el("p", { class: "list-help", text: `Tap “I'll get this” so nobody doubles up. ${owner.name} won't see it.` })
       : null,
@@ -323,12 +332,62 @@ function listCard(list) {
           class: "empty",
           text: mine ? "Your hold is empty. Add a few ideas so your Santa isn't lost at sea." : "Nothing in the hold yet.",
         }),
-    mine ? wishForm() : null,
+    mine
+      ? el(
+          "div",
+          { class: "card-foot" },
+          el("button", { class: "btn small", type: "button", text: "Add to my list", onclick: openMyList }),
+        )
+      : null,
   );
 }
 
-function wishRow(list, item) {
-  if (list.role === "me" && editing === item.id) {
+// The full editor for your own list, folded away at the bottom of the page.
+function myListEditor(list) {
+  const count = list.items.length;
+  const details = el(
+    "details",
+    { class: "card my-list", id: "my-list", open: listOpen },
+    el(
+      "summary",
+      {},
+      el(
+        "span",
+        { class: "my-list-head" },
+        el("h3", { text: "Your wish list" }),
+        el("span", {
+          class: "my-list-count",
+          text: count === 0 ? "No wishes yet" : count === 1 ? "1 wish" : `${count} wishes`,
+        }),
+      ),
+      el("span", { class: "my-list-toggle", "aria-hidden": "true" }),
+    ),
+    el(
+      "div",
+      { class: "my-list-body" },
+      el("div", { class: "rope" }),
+      el("p", {
+        class: "list-help",
+        text: "Add links, sizes and anything else that helps. Your partner and your Santa can mark things they're getting. You'll never see which.",
+      }),
+      count
+        ? el(
+            "ul",
+            { class: "wishes" },
+            list.items.map((item) => wishRow(list, item, { editable: true })),
+          )
+        : null,
+      wishForm(),
+    ),
+  );
+  details.addEventListener("toggle", () => {
+    listOpen = details.open;
+  });
+  return details;
+}
+
+function wishRow(list, item, { editable = false } = {}) {
+  if (editable && editing === item.id) {
     return el("li", { class: "wish editing" }, wishForm(item));
   }
 
@@ -345,7 +404,7 @@ function wishRow(list, item) {
 
   const side = el("div", { class: "wish-side" }, item.price ? el("span", { class: "price", text: item.price }) : null);
 
-  if (list.role === "me") {
+  if (editable) {
     side.append(
       el(
         "div",
@@ -437,7 +496,7 @@ function wishForm(item) {
 
   const form = el(
     "form",
-    { class: "wish-form" },
+    { class: isEdit ? "wish-form editing-form" : "wish-form" },
     el("p", { class: "form-title", text: isEdit ? "Edit this wish" : "Add a wish" }),
     field("title", "What is it?", { required: true, max: 120, placeholder: "e.g. A fisherman's wool jumper" }),
     el(
@@ -496,7 +555,7 @@ async function submitWish(form, item) {
     } else {
       draft = emptyDraft();
       render();
-      document.querySelector(".card.mine .wish-form input[name=title]")?.focus();
+      document.querySelector("#my-list .wish-form:not(.editing-form) input[name=title]")?.focus();
       toast("Added to your list.");
     }
   } catch (err) {

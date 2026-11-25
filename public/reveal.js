@@ -7,7 +7,8 @@ const app = document.getElementById("app");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const SVG_NS = "http://www.w3.org/2000/svg";
 
-const auth = credentials();
+const practice = new URLSearchParams(location.search).has("practice");
+const auth = practice ? null : credentials();
 let chart = null; // { people, gifts, loops }
 let names = {};
 let order = []; // the gifts, shuffled so one answer doesn't give away the next
@@ -38,8 +39,47 @@ function shuffle(items) {
   return copy;
 }
 
+// A made-up crew with a fresh random draw, so anyone can try the reveal
+// without spoiling the real one.
+const PRACTICE_CREW = ["Santa", "Spouter", "Tusker", "Whisker", "Splasher", "Flipper"];
+
+function practiceChart() {
+  const ids = PRACTICE_CREW.map((n) => n.toLowerCase());
+  let to;
+  do {
+    to = shuffle(ids);
+  } while (ids.some((id, i) => to[i] === id || to[ids.indexOf(to[i])] === id));
+  const assignments = Object.fromEntries(ids.map((id, i) => [id, to[i]]));
+  const loops = [];
+  const visited = new Set();
+  for (const start of ids) {
+    if (visited.has(start)) continue;
+    const loop = [];
+    for (let id = start; !visited.has(id); id = assignments[id]) {
+      visited.add(id);
+      loop.push(id);
+    }
+    loops.push(loop);
+  }
+  return {
+    people: ids.map((id, i) => ({ id, name: PRACTICE_CREW[i] })),
+    gifts: ids.map((id) => ({ from: id, to: assignments[id] })),
+    loops,
+  };
+}
+
+function start(newChart) {
+  chart = newChart;
+  names = Object.fromEntries(chart.people.map((p) => [p.id, p.name]));
+  order = shuffle(chart.gifts);
+  opened.clear();
+  step = 0;
+  render();
+}
+
 async function load() {
   clearTimeout(waitTimer);
+  if (practice) return start(practiceChart());
   if (!auth) {
     return notice(
       "Permission to come aboard?",
@@ -48,12 +88,7 @@ async function load() {
     );
   }
   try {
-    chart = await api("/api/reveal", { headers: auth.headers });
-    names = Object.fromEntries(chart.people.map((p) => [p.id, p.name]));
-    order = shuffle(chart.gifts);
-    opened.clear();
-    step = 0;
-    render();
+    start(await api("/api/reveal", { headers: auth.headers }));
   } catch (err) {
     if (err.status === 403) {
       waiting();
@@ -71,9 +106,25 @@ async function load() {
 // ---------- Screens ----------
 
 function backLink() {
+  const saved = practice ? credentials() : auth;
   const [href, text] =
-    auth?.kind === "crew" ? [`/#${auth.token}`, "Back to your page"] : ["/organizer", "Back to captain's quarters"];
+    saved?.kind === "crew"
+      ? [`/#${saved.token}`, "Back to your page"]
+      : saved?.kind === "organizer"
+        ? ["/organizer", "Back to captain's quarters"]
+        : ["/", "Back aboard"];
   return el("p", { class: "skip" }, el("a", { class: "link-btn light", href, text }));
+}
+
+function practiceNote() {
+  return practice
+    ? el(
+        "p",
+        { class: "practice-note" },
+        el("strong", { text: "Practice run." }),
+        " A made-up crew and a random draw, so no real Santas are revealed.",
+      )
+    : null;
 }
 
 function greeting(title, subtitle) {
@@ -106,6 +157,7 @@ function waiting() {
       el("p", {
         text: "The reveal party hasn't started. Keep this page open: the bottles will wash up by themselves the moment the organizer starts it.",
       }),
+      el("p", {}, el("a", { class: "btn ghost", href: "/reveal?practice", text: "Try a practice run" })),
     ),
     backLink(),
   );
@@ -160,6 +212,8 @@ function render() {
   }
 
   app.replaceChildren(
+    ...[
+    practiceNote(),
     greeting("Uncork the bottles", "One Santa at a time. Guess first, then uncork."),
     el(
       "article",
@@ -188,6 +242,7 @@ function render() {
       el("button", { class: "link-btn light", type: "button", text: "Skip to the whole chart", onclick: () => go(order.length) }),
     ),
     backLink(),
+    ].filter(Boolean),
   );
 }
 
@@ -202,6 +257,8 @@ function finale() {
     ),
   );
   app.replaceChildren(
+    ...[
+    practiceNote(),
     greeting("The whole voyage", "Every gift, and the Santa who sent it."),
     el(
       "article",
@@ -217,16 +274,17 @@ function finale() {
         el("button", {
           class: "btn ghost",
           type: "button",
-          text: "Uncork them all again",
+          text: practice ? "Practise again with a new draw" : "Uncork them all again",
           onclick: () => {
-            order = shuffle(chart.gifts);
-            opened.clear();
-            go(0);
+            if (practice) start(practiceChart());
+            else start(chart);
+            window.scrollTo({ top: app.offsetTop - 16, behavior: reducedMotion ? "auto" : "smooth" });
           },
         }),
       ),
     ),
     backLink(),
+    ].filter(Boolean),
   );
   confetti();
 }
