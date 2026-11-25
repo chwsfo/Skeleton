@@ -325,8 +325,11 @@ function listCard(list) {
     items.length
       ? el(
           "ul",
-          { class: "wishes" },
-          items.map((item) => wishRow(list, item)),
+          { class: "wishes with-or" },
+          items.flatMap((item, i) => [
+            i > 0 ? el("li", { class: "wish-or", "aria-hidden": "true", text: "or" }) : null,
+            wishRow(list, item),
+          ]),
         )
       : el("p", {
           class: "empty",

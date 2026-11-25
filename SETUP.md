@@ -11,7 +11,7 @@ A nautical Secret Santa for Sian & Charles, Bea & Wade, and Serena & Will.
 
 ## Putting it on Netlify (one time, about 10 minutes)
 
-1. **Connect the repository.** In Netlify, choose **Add new project → Import an existing project → GitHub**, then pick `chwsfo/Skeleton`. Pick the `master` branch once this work is merged. To try it before merging, pick the `claude/vibrant-albattani-2cw4lp` branch.
+1. **Connect the repository.** In Netlify, choose **Add new project → Import an existing project → GitHub**, then pick `chwsfo/Skeleton` and the `master` branch.
 2. **Leave the build settings alone.** `netlify.toml` already sets them: no build command, publish folder `public`, functions folder `netlify/functions`. Click **Deploy**.
 3. **Set the organizer key.** Go to **Project configuration → Environment variables → Add a variable**:
    - Key: `ORGANIZER_KEY`
@@ -38,7 +38,6 @@ Storage uses Netlify Blobs, which is built in. There's nothing to set up.
 - **Link previews:** when a link is shared in Messages, WhatsApp and similar apps, they show the message-in-a-bottle card (`public/art/invite-card.jpg`). The preview tags in `public/index.html` point at `https://secretchrimbo.netlify.app`, so update them if the site is renamed. To change the card, edit `dev/invite-card.html` and run `node dev/render-invite-card.cjs`.
 - **Changing the crew:** edit the names in `lib/crew.mjs`, then redraw (only possible before anyone has looked).
 - **Starting over next year:** in Netlify, go to **Blobs**, open the `jolly-kringle` store and delete its entries.
-- The old Skeleton CSS files at the root of the repository (`index.html`, `css/`, `images/`, `bower.json`) aren't used. Netlify only publishes `public/`.
 
 ## Working on it locally
 

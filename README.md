@@ -1,68 +1,59 @@
-# [Skeleton](http://getskeleton.com)
-Skeleton is a simple, responsive boilerplate to kickstart any responsive project.
+# The Jolly Kringle
 
-Check out <http://getskeleton.com> for documentation and details.
+A nautical Secret Santa for Sian & Charles, Bea & Wade, and Serena & Will.
+Santa sails a red-sailed ship towed by a whale, two walruses in Santa hats
+and two seals in scarves.
 
-## Getting started
+Live at **https://secretchrimbo.netlify.app**
 
-There are a couple ways to download Skeleton:
-- [Download the zip](https://github.com/dhg/Skeleton/releases/download/2.0.4/Skeleton-2.0.4.zip)
-- Clone the repo: `git clone https://github.com/dhg/Skeleton.git` (Note: this is under active development, so if you're looking for stable and safe, use the zipped download)
+## How the exchange works
 
+- Partners give each other an open gift.
+- Everyone also draws one secret person from another couple. Nobody draws
+  their partner, and there are no direct swaps.
+- You only ever learn who you're buying for, until the reveal party.
 
-### What's in the download?
+## What's in it
 
-The download includes Skeleton's CSS, Normalize CSS as a reset, a sample favicon, and an index.html as a starting point.
+- **Each person's private page**, opened from a link the organizer sends:
+  - a message in a bottle to uncork, revealing who you're buying for;
+  - a ship's log with the date, place, budget and a countdown;
+  - everyone's wish lists, with links, prices and notes;
+  - a way for the two people buying for you (your partner and your Santa) to
+    mark a wish "I'll get this", which you never see.
+- **The organizer page** (`/organizer`) sets the details, draws the lots and
+  hands out the links. It never shows the draw.
+- **The reveal party** (`/reveal`), started by the organizer after the
+  exchange: guess each Santa, uncork their bottle, then see the whole chart.
+  `/reveal?practice` tries it with a made-up crew.
+- **A message-in-a-bottle preview card** when a link is shared in a chat app.
 
+## Setting it up and running the voyage
+
+See [SETUP.md](SETUP.md) for putting it on Netlify, the organizer key, running
+the draw and the reveal party, and working on it locally.
+
+Quick start for development:
+
+```sh
+npm install
+npm test        # the rules: draw, claims, privacy, the reveal
+npm run dev     # http://localhost:8888, prints all six links
 ```
-Skeleton/
-├── index.html
-├── css/
-│   ├── normalize.min.css
-│   └── skeleton.css
-└── images/
-    └── favicon.ico
 
-```
+## How it's built
 
-### Why it's awesome
+- **`public/`:** plain HTML, CSS and JavaScript, with no build step.
+  - Three pages: the crew page, the organizer page and the reveal page.
+  - Hand-drawn SVG art in `public/art/`.
+- **`netlify/functions/api.mjs`:** one Netlify Function serving `/api/*`.
+- **`lib/core.mjs`:** all the rules, independent of Netlify and covered by
+  `test/`.
+- **`lib/crew.mjs`:** the six names and three couples.
+- **Storage:** Netlify Blobs.
+- **Private links:** derived from the `ORGANIZER_KEY` environment variable, so
+  nothing secret is stored.
 
-Skeleton is lightweight and simple. It styles only raw HTML elements (with a few exceptions) and provides a responsive grid. Nothing more.
-- Around 400 lines of CSS unminified and with comments
-- It's a starting point, not a UI framework
-- No compiling or installing...just vanilla CSS
-
-
-## Browser support
-
-- Chrome latest
-- Firefox latest
-- Opera latest
-- Safari latest
-- IE latest
-
-The above list is non-exhaustive. Skeleton works perfectly with almost all older versions of the browsers above, though IE certainly has large degradation prior to IE9.
-
-
-## License
-
-All parts of Skeleton are free to use and abuse under the [open-source MIT license](https://github.com/dhg/Skeleton/blob/master/LICENSE.md).
-
-
-## Extensions
-
-The following are extensions to Skeleton built by the community. They are not officially supported, but all have been tested and are compatible with v2.0 (exact release noted):
-- [Skeleton on LESS](https://github.com/whatsnewsaes/Skeleton-less): Skeleton built with LESS for easier replacement of grid, color, and media queries. (Last update was to match v2.0.1)
-- [Skeleton on Sass](https://github.com/whatsnewsaes/Skeleton-Sass): Skeleton built with Sass for easier replacement of grid, color, and media queries. (Last update was to match v2.0.1)
-
-Have an extension you want to see here? Just shoot an email to hi@getskeleton.com with your extension!
-
-
-## Colophon
-
-Skeleton was built using [Sublime Text 3](http://www.sublimetext.com/3) and designed with [Sketch](http://bohemiancoding.com/sketch). The typeface [Raleway](http://www.google.com/fonts/specimen/Raleway) was created by [Matt McInerney](http://matt.cc/) and [Pablo Impallari](http://www.impallari.com/). Code highlighting by Google's [Prettify library](https://code.google.com/p/google-code-prettify/). Icons in the header of the documentation are all derivative work of icons from [The Noun Project](http://thenounproject.com). [Feather](http://thenounproject.com/term/feather/22073) by Zach VanDeHey, [Pen](http://thenounproject.com/term/pen/21163) (with cap) by Ed Harrison, [Pen](http://thenounproject.com/term/pen/32847) (with clicker) by Matthew Hall, and [Watch](http://thenounproject.com/term/watch/48015) by Julien Deveaux.
-
-
-## Acknowledgement
-
-Skeleton was created by [Dave Gamache](https://twitter.com/dhg) for a better web.
+This repository began as a copy of [Skeleton](http://getskeleton.com), Dave
+Gamache's CSS boilerplate. None of Skeleton's files are used any more, and its
+history is still in the git log.
