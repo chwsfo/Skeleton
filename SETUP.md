@@ -34,6 +34,7 @@ Storage uses Netlify Blobs, which is built in. There's nothing to set up.
 
 - **Links come from the organizer key.** Changing `ORGANIZER_KEY` gives everyone new links. The old ones stop working, but the draw, wishes and claims are kept.
 - **Lost link?** Copy it again from the organizer page.
+- **Link previews:** when a link is shared in Messages, WhatsApp and similar apps, they show the message-in-a-bottle card (`public/art/invite-card.jpg`). The preview tags in `public/index.html` point at `https://secretchrimbo.netlify.app`, so update them if the site is renamed. To change the card, edit `dev/invite-card.html` and run `node dev/render-invite-card.cjs`.
 - **Changing the crew:** edit the names in `lib/crew.mjs`, then redraw (only possible before anyone has looked).
 - **Starting over next year:** in Netlify, go to **Blobs**, open the `jolly-kringle` store and delete its entries.
 - The old Skeleton CSS files at the root of the repository (`index.html`, `css/`, `images/`, `bower.json`) aren't used. Netlify only publishes `public/`.
